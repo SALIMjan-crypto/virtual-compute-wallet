@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Compute Wallet — Product Specifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0F0F1A;
+    color: #E8E8F0;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 10mm 11mm 8mm 11mm;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(165deg, #0F0F1A 0%, #1A1A2E 40%, #16213E 100%);
+  }
+
+  /* Decorative background elements */
+  .page::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(233,69,96,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .page::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(108,92,231,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5mm;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-left h1 {
+    font-size: 17pt;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #C8C8E0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+  }
+
+  .header-left .subtitle {
+    font-size: 8.5pt;
+    color: #E94560;
+    font-weight: 600;
+    margin-top: 1.5mm;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    text-align: right;
+    padding-top: 1mm;
+  }
+
+  .header-right .partners {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #A0A0C0;
+  }
+
+  .header-right .partners span {
+    color: #E94560;
+  }
+
+  .header-right .date {
+    font-size: 6.5pt;
+    color: #666680;
+    margin-top: 1mm;
+  }
+
+  .divider {
+    height: 1.5px;
+    background: linear-gradient(90deg, #E94560 0%, #6C5CE7 50%, transparent 100%);
+    margin-bottom: 4mm;
+    border-radius: 1px;
+  }
+
+  /* ── PIVOT BANNER ── */
+  .pivot-banner {
+    background: linear-gradient(135deg, rgba(233,69,96,0.12) 0%, rgba(108,92,231,0.08) 100%);
+    border: 1px solid rgba(233,69,96,0.25);
+    border-radius: 5px;
+    padding: 3mm 4mm;
+    margin-bottom: 4mm;
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+
+  .pivot-banner .icon {
+    font-size: 13pt;
+    flex-shrink: 0;
+  }
+
+  .pivot-banner .text {
+    font-size: 6.8pt;
+    color: #D0D0E0;
+    line-height: 1.45;
+  }
+
+  .pivot-banner .text strong {
+    color: #E94560;
+  }
+
+  /* ── GRID LAYOUT ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3mm;
+    margin-bottom: 3mm;
+  }
+
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    margin-bottom: 3mm;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 5px;
+    padding: 3mm;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .card.blue::before { background: linear-gradient(90deg, #0984E3, #00CEC9); }
+  .card.red::before { background: linear-gradient(90deg, #E94560, #FF6B6B); }
+  .card.green::before { background: linear-gradient(90deg, #00B894, #55EFC4); }
+  .card.purple::before { background: linear-gradient(90deg, #6C5CE7, #A29BFE); }
+  .card.gold::before { background: linear-gradient(90deg, #FDCB6E, #F9CA24); }
+  .card.teal::before { background: linear-gradient(90deg, #00CEC9, #81ECEC); }
+
+  .card-title {
+    font-size: 6.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 2mm;
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+  }
+
+  .card.blue .card-title { color: #0984E3; }
+  .card.red .card-title { color: #E94560; }
+  .card.green .card-title { color: #00B894; }
+  .card.purple .card-title { color: #6C5CE7; }
+  .card.gold .card-title { color: #FDCB6E; }
+  .card.teal .card-title { color: #00CEC9; }
+
+  .card-content {
+    font-size: 6.2pt;
+    line-height: 1.55;
+    color: #B0B0C8;
+  }
+
+  .card-content strong {
+    color: #E0E0F0;
+    font-weight: 600;
+  }
+
+  .card-content .highlight {
+    color: #E94560;
+    font-weight: 700;
+  }
+
+  .card-content .green-hl {
+    color: #00B894;
+    font-weight: 700;
+  }
+
+  .card-content .purple-hl {
+    color: #A29BFE;
+    font-weight: 600;
+  }
+
+  /* ── MINI TABLE ── */
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 5.8pt;
+    margin-top: 1.5mm;
+  }
+
+  .mini-table th {
+    text-align: left;
+    font-weight: 700;
+    padding: 1mm 1.5mm;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #A0A0C0;
+    font-size: 5.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .mini-table td {
+    padding: 0.8mm 1.5mm;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #C0C0D8;
+    vertical-align: top;
+  }
+
+  .mini-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .mini-table .accent {
+    color: #E94560;
+    font-weight: 600;
+  }
+
+  .mini-table .good {
+    color: #00B894;
+    font-weight: 600;
+  }
+
+  /* ── FLOW STEPS ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 1.5mm;
+  }
+
+  .flow-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-step .step-num {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5.5pt;
+    font-weight: 800;
+    color: white;
+    margin: 0 auto 1mm;
+  }
+
+  .flow-step:nth-child(1) .step-num,
+  .flow-step:nth-child(2) .step-num { background: #0984E3; }
+  .flow-step:nth-child(3) .step-num { background: #6C5CE7; }
+  .flow-step:nth-child(4) .step-num { background: #00B894; }
+  .flow-step:nth-child(5) .step-num { background: #E94560; }
+  .flow-step:nth-child(6) .step-num { background: #FDCB6E; color: #1A1A2E; }
+
+  .flow-step .step-label {
+    font-size: 5.5pt;
+    color: #B0B0C8;
+    line-height: 1.3;
+  }
+
+  .flow-arrow {
+    color: #444460;
+    font-size: 7pt;
+    flex-shrink: 0;
+    margin: 0 -1mm;
+    padding-bottom: 4mm;
+  }
+
+  /* ── SPAN CLASSES ── */
+  .span-2col { grid-column: span 2; }
+  .span-3col { grid-column: span 3; }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: absolute;
+    bottom: 6mm;
+    left: 11mm;
+    right: 11mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 5.5pt;
+    color: #444460;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 2mm;
+  }
+
+  .footer .confidential {
+    font-weight: 600;
+    color: #E94560;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 5pt;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 0.4mm 2mm;
+    border-radius: 3px;
+    font-size: 5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+  }
+  .badge.red { background: rgba(233,69,96,0.2); color: #E94560; }
+  .badge.green { background: rgba(0,184,148,0.2); color: #00B894; }
+  .badge.purple { background: rgba(108,92,231,0.2); color: #A29BFE; }
+  .badge.blue { background: rgba(9,132,227,0.2); color: #74B9FF; }
+
+  @media print {
+    body {
+      background: #0F0F1A;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Virtual Compute Wallet</h1>
+      <div class="subtitle">Embedded GPU Credit Module&ensp;·&ensp;Product Specifications v2.0</div>
+    </div>
+    <div class="header-right">
+      <div class="partners">zypl.ai <span>×</span> Zinda Capital</div>
+      <div class="date">June 2, 2026&ensp;|&ensp;Post-meeting update (Akai Akmal / Visa)</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- PIVOT BANNER -->
+  <div class="pivot-banner">
+    <div class="icon">⚡</div>
+    <div class="text">
+      <strong>PRODUCT PIVOT:</strong> Visa requires 10,000+ cards for a dedicated BIN + per-card compliance — impractical for pilot.
+      <strong>New architecture:</strong> Embedded module inside <strong>Zinda Internet Banking</strong> as a <strong>purpose-locked TJS wallet</strong> — no physical card, no Visa dependency. Funds can <strong>ONLY</strong> be used for GPU compute.
+    </div>
+  </div>
+
+  <!-- ROW 1: Architecture + Tech Specs + Customer Segments -->
+  <div class="grid">
+    <div class="card blue">
+      <div class="card-title">⬡ Architecture</div>
+      <div class="card-content">
+        <strong>Frontend:</strong> "Cloud Compute" module in Zinda app<br>
+        <strong>Backend:</strong> Dedicated TJS e-wallet on Zinda's ledger<br>
+        <strong>API:</strong> Zinda ledger ↔ zypl.ai provisioning endpoint<br>
+        <strong>Purpose Lock:</strong> Wallet funds <span class="highlight">cannot</span> be used for anything other than GPU compute<br>
+        <strong>Hardware:</strong> NVIDIA H200 SXM (141 GB HBM3e)
+      </div>
+    </div>
+
+    <div class="card purple">
+      <div class="card-title">◎ Tech Specifications</div>
+      <div class="card-content">
+        <table class="mini-table">
+          <tr><td>GPU Model</td><td><strong>NVIDIA H200 SXM</strong></td></tr>
+          <tr><td>Pilot Pool</td><td><strong>4× H200</strong> (1 server)</td></tr>
+          <tr><td>GPU Memory</td><td><strong>141 GB</strong> HBM3e per GPU</td></tr>
+          <tr><td>Max Sessions</td><td><strong>4</strong> concurrent</td></tr>
+          <tr><td>GPU-hours/mo</td><td><strong>2,880</strong> hrs</td></tr>
+          <tr><td>Rate</td><td><strong class="good">$3–4/hr</strong> (vs $28–35 cloud)</td></tr>
+          <tr><td>Billing</td><td>Real-time metering via API</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card teal">
+      <div class="card-title">◉ Customer Segments</div>
+      <div class="card-content">
+        <span class="badge blue">Mobile Wallet</span>&ensp;<strong>Individuals</strong><br>
+        &ensp;• Researchers &amp; professors<br>
+        &ensp;• University teachers of AI<br>
+        &ensp;• Students &amp; academics<br><br>
+        <span class="badge purple">Internet Banking</span>&ensp;<strong>Companies</strong><br>
+        &ensp;• AI startups &amp; tech companies<br>
+        &ensp;• Financial companies &amp; fintechs<br>
+        &ensp;• Other enterprises
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Two Product Models -->
+  <div class="grid-2col">
+    <div class="card green">
+      <div class="card-title">◆ Model A: Prepaid Wallet&ensp;<span class="badge green">★ Recommended v1</span></div>
+      <div class="card-content">
+        <strong>How it works:</strong> User tops up TJS wallet → converts to GPU-hours → consumed on use<br>
+        <strong>Credit risk:</strong> <span class="green-hl">Zero</span> — fully pre-funded<br>
+        <strong>Regulatory:</strong> Simple — standard e-wallet / prepaid instrument<br>
+        <strong>KYC:</strong> Standard Zinda KYC (existing IB users already verified)<br>
+        <strong>Time to market:</strong> <span class="green-hl">2–3 months</span><br>
+        <strong>Bank fee:</strong> <span class="green-hl">0%</span> — no interest, pure prepaid
+      </div>
+    </div>
+
+    <div class="card red">
+      <div class="card-title">◆ Model B: Credit Limit&ensp;<span class="badge purple">Planned v2</span></div>
+      <div class="card-content">
+        <strong>How it works:</strong> Zinda extends credit (scored by zypl.ai) → user consumes → pays per fee schedule<br>
+        <strong>Scoring:</strong> zypl.ai credit scoring system<br>
+        <strong>Max tenor:</strong> Up to <strong>24 months</strong><br>
+        <strong>Scoring:</strong> zypl.ai credit scoring system<br>
+        <strong>Time to market:</strong> 6–9 months (after v1 validation)
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Fee Schedule + Guarantee + Revenue -->
+  <div class="grid">
+    <div class="card gold">
+      <div class="card-title">$ Credit Fee Schedule</div>
+      <div class="card-content">
+        <table class="mini-table">
+          <tr><th>Month</th><th>Bank Fee</th></tr>
+          <tr><td>Month 1</td><td class="good"><strong>0%</strong> Free</td></tr>
+          <tr><td>Month 2</td><td><strong>1%</strong></td></tr>
+          <tr><td>Month 3</td><td><strong>2%</strong></td></tr>
+          <tr><td>Month 6</td><td><strong>3%</strong></td></tr>
+          <tr><td>Month 9</td><td><strong>4%</strong></td></tr>
+          <tr><td>Month 12</td><td><strong>5%</strong></td></tr>
+          <tr><td>Month 13–24</td><td><strong>5%</strong> (capped)</td></tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div class="card green">
+      <div class="card-title">📈 Revenue Projection</div>
+      <div class="card-content">
+        <table class="mini-table">
+          <tr><th>Phase</th><th>GPUs</th><th>Revenue/yr</th></tr>
+          <tr><td>Pilot</td><td>4</td><td><strong>$90K–$170K</strong></td></tr>
+          <tr><td>Phase 1</td><td>16</td><td><strong>$360K–$680K</strong></td></tr>
+          <tr><td>Phase 2</td><td>50</td><td><strong>$1.1M–$2.1M</strong></td></tr>
+          <tr><td>Scale</td><td>100</td><td class="good"><strong>$2.25M–$4.25M</strong></td></tr>
+        </table>
+        <div style="margin-top: 1.5mm; font-size: 5.5pt; color: #666;">
+          Rate: $3–4/GPU-hr · Supply-bound, not demand-bound
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: Customer Journey + Roles -->
+  <div class="grid-2col">
+    <div class="card blue">
+      <div class="card-title">↠ Customer Journey (In-App)</div>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-label">Open App →<br>"Cloud Compute"</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div class="step-label">Accept T&C<br>& Fund Wallet</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div class="step-label">Configure<br>H200 GPU</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-label">Click<br>"Launch Server"</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="step-num">5</div>
+          <div class="step-label">Get SSH +<br>Jupyter creds</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="step-num">6</div>
+          <div class="step-label">Train models<br>Real-time billing</div>
+        </div>
+      </div>
+      <div style="margin-top: 2mm; font-size: 5.5pt; color: #666; text-align: center;">
+        No branch visit · No physical card · No Visa · 2–3 taps to launch
+      </div>
+    </div>
+
+    <div class="card purple">
+      <div class="card-title">⚙ Participants & Roles</div>
+      <div class="card-content">
+        <table class="mini-table">
+          <tr><th>Entity</th><th>Role</th></tr>
+          <tr>
+            <td><strong>Zinda Capital</strong></td>
+            <td>Platform owner, wallet issuer, KYC, billing, credit underwriting, regulatory compliance</td>
+          </tr>
+          <tr>
+            <td><strong>zypl.ai</strong></td>
+            <td>GPU infrastructure (4× H200), provisioning API, metering, credit scoring</td>
+          </tr>
+          <tr>
+            <td><strong>Central Bank</strong></td>
+            <td>E-wallet oversight, credit product licensing (v2)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 5: Next Steps -->
+  <div class="card purple span-3col" style="margin-bottom: 0;">
+    <div class="card-title">→ Immediate Next Steps</div>
+    <div class="card-content">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm;">
+        <div>
+          <span class="badge red">Week 1</span><br>
+          <strong>Finalize & sign off</strong> on product specifications (this document)
+        </div>
+        <div>
+          <span class="badge purple">Week 2–3</span><br>
+          <strong>Joint design discussion</strong> — zypl.ai + Zinda collaborate on UI/UX, user flows & branding
+        </div>
+        <div>
+          <span class="badge blue">Week 3–5</span><br>
+          <strong>Build APIs</strong> — zypl.ai provisioning endpoints + Zinda ledger integration + regulatory filing
+        </div>
+        <div>
+          <span class="badge green">Week 5–8</span><br>
+          <strong>Develop & launch</strong> — Front-end module build, QA, pilot with 10–20 users
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="confidential">Confidential — For Internal Use Only</div>
+    <div>Virtual Compute Wallet · zypl.ai × Zinda Capital · v2.0 · June 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
